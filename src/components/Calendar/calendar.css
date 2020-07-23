@@ -1,0 +1,64 @@
+.calendar-container {
+    display: flex;
+    flex-direction: row-reverse;
+    margin: 0 15px;
+    padding: 20px 0;
+    /* overflow-x: auto; */
+  }
+  
+  .calendar-day {
+    flex: 0 0 300px;
+    padding: 0 20px;
+  }
+  
+  .calendar-day-label {
+    font-size: 16px;
+    margin: 0 0 15px;
+    text-align: center;
+  }
+  
+  .calendar-day-label span {
+    background: #c0e8a4;
+    border-radius: 4px;
+    color: #48407b;
+    display: inline-block;
+    font-weight: bold;
+    padding: 4px 8px;
+  }
+  
+  .calendar-event {
+    align-items: flex-start;
+    background: #74a9a6;
+    border-radius: 4px;
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    margin: 0 0 10px;
+    padding: 8px 14px;
+  }
+  
+  .calendar-event-info {
+    flex-grow: 1;
+    flex-basis: 82%;
+    line-height: 23px;
+  }
+  
+  .calendar-event-time {
+    font-size: 0.8em;
+    margin-bottom: 8px;
+  }
+  
+  .calendar-event-delete-button {
+    appearance: none;
+    background: none;
+    border: 0;
+    cursor: pointer;
+    flex-shrink: 0;
+    height: 23px;
+    font-size: 25px;
+    line-height: 20px;
+    margin: 0 0 0 10px;
+    padding: 0;
+    width: 23px;
+  }
+  
