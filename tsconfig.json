@@ -15,7 +15,7 @@
     "module": "esnext",
     "moduleResolution": "node",
     "resolveJsonModule": true,
-    "isolatedModules": true,
+    "isolatedModules": true,//true changed it for this error: All files must be modules when the '--isolatedModules' flag is provided.  TS1208
     "noEmit": true,
     "jsx": "react"
   },
