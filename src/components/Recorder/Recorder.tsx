@@ -2,6 +2,7 @@ import React, { useRef, useState, useEffect } from 'react';
 import {useDispatch, useSelector} from 'react-redux';
 import './Recorder.css'
 import { StartRecorder, selectStartDate, StopRecorder } from '../../redux/recorder';
+import {addZero} from './../../lib/utils'
 import cx from 'classnames';
 
 
@@ -50,8 +51,7 @@ const Recorder: React.FC = () => {
       }, []);
 
 
-    //add a 0 if the number is less than 10
-    const addZero = (num: number) => (num < 10 ? `0${num}` : `${num}`);
+    
 
     //logic to calculate the elapsed hours, minutes, seconds for the counter. 
     //So because of the setInterval, every second the below logic is executed and the ui is re-rendered

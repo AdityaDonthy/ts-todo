@@ -28,7 +28,13 @@ interface RecorderState {
 
 //Let's first define names of our Action 'types' as constant name/type
 
-//Below 2 declarations are so trippy. Instead of defining a const string like we so in js, we create a const type with a name which is a string type 
+//Below 2 declarations are so trippy and confusing! They different in a subtle. TS infers a type of the value if it can, 
+//like here it's pretty obvious to be a string!!!
+// Ignore this -> Instead of defining a const string like we do in js, we create a const type with a name which is a string type
+//For instance the below 2 are different when used to define the Actions
+//First would be considered as Action<"START_RECORDER">
+//Second would be considered an Action<string> 
+//So subtle but such a huge difference !!! 🤯 🤯 🤯 🤯 🤯 🤯 
 const START_RECORDER = 'Start-Recorder'
 const STOP_RECORDER: string = 'Stop-Recorder'
 

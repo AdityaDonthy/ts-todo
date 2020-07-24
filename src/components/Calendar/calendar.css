@@ -29,7 +29,7 @@
   .calendar-event {
     align-items: flex-start;
     background: #74a9a6;
-    border-radius: 4px;
+    border-radius: 14px;
     display: flex;
     justify-content: space-between;
     flex-wrap: wrap;
