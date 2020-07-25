@@ -4,6 +4,7 @@ import {connect, ConnectedProps} from 'react-redux'
 import { RootState } from '../../redux/store';
 import { selectUserEventsArray, loadUserEvents, UserEvent } from '../../redux/user-events';
 import { addZero } from '../../lib/utils';
+import EventItem from './EventItem';
 
 //To pass arguments to connect function, we first define mapStateToProps and mapDispatchToProps
 const mapStateToProps = (state: RootState) => ({
@@ -91,13 +92,7 @@ const groupEventsByDay = (events: UserEvent[]) => {
                 <div className="calendar-events">
                   {events.map(event => {
                     return (
-                            <div className="calendar-event">
-                            <div className="calendar-event-info">
-                                <div className="calendar-event-time">10:00 - 12:00</div>
-                                <div className="calendar-event-title">{event.title}</div>
-                            </div>
-                            <button className="calendar-event-delete-button">&times;</button>
-                        </div>
+                        <EventItem key = {event.id} event = {event} />
                     )
                   })}
                 </div>

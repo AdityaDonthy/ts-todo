@@ -41,11 +41,30 @@ const initialState: UserEventsState = {
 const LOAD_REQUEST = 'userEvents/load_request'
 const LOAD_SUCCESSFUL = 'userEvents/load_successful'
 const LOAD_FAILURE = 'userEvents/load_failure'
+
 const CREATE_EVENT = 'userEvents/create_event'
 const CREATE_SUCCESS = 'userEvents/create_success'
 const CREATE_FAILURE = 'userEvents/create_failure'
 
+const DELETE_EVENT = 'userEvents/delete_event'
+const DELETE_REQUEST = 'userEvents/delete_request'
+const DELETE_SUCCESS = 'userEvents/delete_success';
+const DELETE_FAILURE = 'userEvents/delete_failure';
+
+interface DeleteFailureAction extends Action<typeof DELETE_FAILURE> {}
+interface DeleteSuccessAction extends Action<typeof DELETE_SUCCESS> {
+  payload: { id: UserEvent['id'] };
+}
+
 interface LoadRequestAction extends Action<typeof LOAD_REQUEST>{
+}
+
+interface DeleteRequestAction extends Action<typeof DELETE_REQUEST>{}
+
+interface DeleteEventAction extends Action<typeof DELETE_EVENT>{
+    payload: {
+        id: number
+    }
 }
 
 interface CreateFailureAction extends Action<typeof CREATE_FAILURE>{
@@ -86,6 +105,33 @@ export interface ThunkDispatch<S, E, A extends Action> {
   <R>(asyncAction: ThunkAction<R, S, E, A>): R;
 }
 */
+
+export const deleteUserEvent = (id: UserEvent['id']):ThunkAction<
+Promise<void>,
+RootState,
+undefined,
+DeleteRequestAction | DeleteSuccessAction | DeleteFailureAction
+> => async (dispatch, getState) => {
+    dispatch({
+        type: DELETE_REQUEST,
+        id
+    })
+
+    try {
+        const response = await fetch(`http://localhost:3001/events/${id}`, {
+          method: 'DELETE'
+        });
+    
+        if (response.ok) {
+          dispatch({
+            type: DELETE_SUCCESS,
+            payload: { id }
+          });
+        }
+      } catch (e) {
+        dispatch({ type: DELETE_FAILURE });
+      }
+}
 
 export const createUserEvent = ():ThunkAction<
 Promise<void>,
@@ -182,7 +228,7 @@ export const selectUserEventsArray = (rootState: RootState) => {
 };
 
 //This reducer acts on pre defined types of objects. It's part of the signature
-const eventsReducer = (state: UserEventsState = initialState, action: LoadSuccessFulAction | CreateSuccessAction) => {
+const eventsReducer = (state: UserEventsState = initialState, action: LoadSuccessFulAction | CreateSuccessAction | DeleteSuccessAction) => {
     switch(action.type){
         case LOAD_SUCCESSFUL: 
             const {events} = action.payload
@@ -207,6 +253,16 @@ const eventsReducer = (state: UserEventsState = initialState, action: LoadSucces
                 allIds: [...state.allIds, event.id],
                 byIds: {...state.byIds, [event.id]: event}
             }
+        case DELETE_SUCCESS:
+            const { id } = action.payload;
+            //A bit of a circus to delete the event
+            const newState = {
+                ...state,
+                byIds: { ...state.byIds },
+                allIds: state.allIds.filter(storedId => storedId !== id)
+            };
+            delete newState.byIds[id];
+        return newState;
         default: return state;
     }
 }
