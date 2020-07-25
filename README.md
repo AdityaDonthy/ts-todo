@@ -17,7 +17,9 @@ User is given an option to start the timer at the beginning of the event and the
 
 We need to define how we can interact with our redux store. The pattern to create a flow is as follows
 1. Define the constant that describes the Action 
+```
     const LOAD_REQUEST = 'userEvents/load_request'
+```
 2. Extend the Redux Action and create a custom Action. We define our Action Object
 ```
     interface LoadSuccessFulAction extends Action<typeof LOAD_SUCCESSFUL>{
@@ -47,7 +49,12 @@ We need to define how we can interact with our redux store. The pattern to creat
         }
     )
 ```  
-5. This Action Creator is wat will be called from the Component
+5. This Action Creator is what will be called from the Component, like in componentDidMount or event handlers
+```
+ useEffect(() => {
+        loadUserEvents();
+      }, []);
+```
 6. Now we need to handle the Action in the Reducer
 ```
     switch(action.type){
@@ -59,4 +66,4 @@ We need to define how we can interact with our redux store. The pattern to creat
             }
     }
 ```
-7.New state is notified to the component so they can rr-render
+7.New state is notified to the component so they can re-render
