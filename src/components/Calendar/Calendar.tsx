@@ -58,7 +58,7 @@ const groupEventsByDay = (events: UserEvent[]) => {
   };
 
   const Calendar: React.FC<Props> = ({ events, loadUserEvents }) => {
-    console.log(events)
+    
     useEffect(() => {
         loadUserEvents();
       }, []);
