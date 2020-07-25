@@ -105,10 +105,11 @@ CreateEventAction | CreateSuccessAction | CreateFailureAction
     //assured that the timeStamp fetched is accurate.
 
         const startDate = selectStartDate(getState());
+    //Construct the event object and define it's type
     //I need a a type which is a transformation of type UserEvent but omitting the id property. I don't ant to take the responsibility 
     //of creating an id. A Higher Order Type ?
         const event: Omit<UserEvent, 'id'> = {
-          title: 'No name',
+          title: 'No name ..',
           startDate,
           endDate: new Date().toISOString()
         };
@@ -180,7 +181,8 @@ export const selectUserEventsArray = (rootState: RootState) => {
   return state.allIds.map(id => state.byIds[id]);
 };
 
-const eventsReducer = (state: UserEventsState = initialState, action: LoadSuccessFulAction) => {
+//This reducer acts on pre defined types of objects. It's part of the signature
+const eventsReducer = (state: UserEventsState = initialState, action: LoadSuccessFulAction | CreateSuccessAction) => {
     switch(action.type){
         case LOAD_SUCCESSFUL: 
             const {events} = action.payload
@@ -189,13 +191,21 @@ const eventsReducer = (state: UserEventsState = initialState, action: LoadSucces
             //constructing the 'table' outta this array is done by using the reduce function. We pass 2 arguments, a reducer function and an initial object
             //reducer is a function that accepts 2 parameters . First is the object that we want to reduce to, second is each element in the collection
             //In this function we just construct this dictionary object , finally we return the new state
-            return {
+        return {
                 ...state,
                 allIds: events.map( e => e.id ),
                 byIds: events.reduce<UserEventsState['byIds']>((byIds, event) => {
                     byIds[event.id] = event;
                     return byIds;
                 },{})
+            }
+        case CREATE_SUCCESS: 
+            const {event} = action.payload
+        // return the new state by adding the event created to the global state by doing an immutable update
+        return {
+                ...state,
+                allIds: [...state.allIds, event.id],
+                byIds: {...state.byIds, [event.id]: event}
             }
         default: return state;
     }

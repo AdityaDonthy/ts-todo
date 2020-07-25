@@ -4,7 +4,6 @@ import './Recorder.css'
 import { StartRecorder, selectStartDate, StopRecorder } from '../../redux/recorder';
 import {addZero} from './../../lib/utils'
 import cx from 'classnames';
-import { createEvent } from '@testing-library/react';
 import { createUserEvent } from '../../redux/user-events';
 
 
