@@ -80,8 +80,8 @@ const initialState: RecorderState = {
 
 //Selectors 
 //useSelector hook Signature: const result: any = useSelector(selector: Function, equalityFn?: Function)
-// useSelector takes a function as an argument and the signature of function is selector: (state: TState) => TSelected . 
-//It takes in the state(passed bu useSelector) and returns the specific piece of state.  So it's very similar to the mapStateToProps function. 
+//useSelector takes a function as an argument and the signature of function is selector: (state: TState) => TSelected . 
+//It takes in the state(passed by useSelector) and returns the specific piece of state.  So it's very similar to the mapStateToProps function. 
 //The return value of this selector will be used as the return value of the useSelector() hook in a component.
 //You may call useSelector() multiple times within a single function component. Each call to useSelector() creates an individual subscription to the Redux store. 
 //Because of the React update batching behavior used in React Redux v7, a dispatched action that causes multiple useSelector()s in the same 

@@ -1,6 +1,7 @@
 import { Action } from "redux";
 import { ThunkAction } from "redux-thunk";
 import { RootState } from "./store";
+import { selectStartDate } from "./recorder";
 
 export interface UserEvent{
     id: number;
@@ -40,11 +41,23 @@ const initialState: UserEventsState = {
 const LOAD_REQUEST = 'userEvents/load_request'
 const LOAD_SUCCESSFUL = 'userEvents/load_successful'
 const LOAD_FAILURE = 'userEvents/load_failure'
-interface LoadRequestAction extends Action<typeof LOAD_REQUEST>
-{
+const CREATE_EVENT = 'userEvents/create_event'
+const CREATE_SUCCESS = 'userEvents/create_success'
+const CREATE_FAILURE = 'userEvents/create_failure'
 
+interface LoadRequestAction extends Action<typeof LOAD_REQUEST>{
 }
 
+interface CreateFailureAction extends Action<typeof CREATE_FAILURE>{
+    payload: {
+        error: string
+    }
+}
+interface CreateSuccessAction extends Action<typeof CREATE_SUCCESS> {
+    payload: {
+        event: UserEvent
+    } 
+}
 //This is an action with a payload. 
 interface LoadSuccessFulAction extends Action<typeof LOAD_SUCCESSFUL>{
     payload: {
@@ -54,6 +67,10 @@ interface LoadSuccessFulAction extends Action<typeof LOAD_SUCCESSFUL>{
 
 interface LoadFailureAction extends Action<typeof LOAD_FAILURE>{
     error: string
+}
+
+interface CreateEventAction extends Action<typeof CREATE_EVENT>{
+
 }
 
 /*It's easy to understand the crasziness behind the ThunkAction if you understand the signature
@@ -69,6 +86,57 @@ export interface ThunkDispatch<S, E, A extends Action> {
   <R>(asyncAction: ThunkAction<R, S, E, A>): R;
 }
 */
+
+export const createUserEvent = ():ThunkAction<
+Promise<void>,
+RootState,
+undefined,
+CreateEventAction | CreateSuccessAction | CreateFailureAction
+> => async (dispatch, getState) => {
+    dispatch({
+        type: CREATE_EVENT
+    })
+
+
+    try {
+    //We first need to fetch the startDate value to create an event. Remember this is in the different part of the state
+    //Now this part of the state tree should get a value from that part of the state tree. So we use a selector function defined in the other duck
+    //Because of the fact that a connected component is always in sync with the redux store, we can fetch this value directly from the store and be 
+    //assured that the timeStamp fetched is accurate.
+
+        const startDate = selectStartDate(getState());
+    //I need a a type which is a transformation of type UserEvent but omitting the id property. I don't ant to take the responsibility 
+    //of creating an id. A Higher Order Type ?
+        const event: Omit<UserEvent, 'id'> = {
+          title: 'No name',
+          startDate,
+          endDate: new Date().toISOString()
+        };
+    //Create a POST request and add in the headers. In the body, we serialise the javascript object into json Object for over the wire transport
+        const response = await fetch(`http://localhost:3001/events`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(event)
+        });
+    //Now that the event is created, read the response and deserialise it
+        const createdEvent: UserEvent = await response.json();
+    //Dispatch the action to the store and pass the action object in the payload
+    //reducer will add it and notify the subscribers, so the UI can render it
+        dispatch({
+          type: CREATE_SUCCESS, // add this ti signature else the compiler yells
+          payload: { event: createdEvent }
+        });
+      }catch(e){
+          dispatch(
+              {
+                type: CREATE_FAILURE,
+                payload: { error: 'Unable to create, Try again' }
+              }
+          )
+      }
+}
 
 export const loadUserEvents = ():ThunkAction<
 void,

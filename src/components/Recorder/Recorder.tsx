@@ -4,6 +4,8 @@ import './Recorder.css'
 import { StartRecorder, selectStartDate, StopRecorder } from '../../redux/recorder';
 import {addZero} from './../../lib/utils'
 import cx from 'classnames';
+import { createEvent } from '@testing-library/react';
+import { createUserEvent } from '../../redux/user-events';
 
 
 
@@ -32,6 +34,10 @@ const Recorder: React.FC = () => {
         // If the counter is already started, consider this as a stop action and dispatch it
         if(started){
             window.clearInterval(interval.current);
+            //We are taking the click after starting the timer and dispatching an action which will read the current startDate from the store and 
+            // caculate the current time and set the endDate on the event property
+            dispatch(createUserEvent())
+            //Set the startDate to '' so the ui adjusts to the new state
             dispatch(StopRecorder());
         }// else,  we dispatch the stat action and increment the count by 1
         else{
