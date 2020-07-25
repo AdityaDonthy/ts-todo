@@ -50,6 +50,22 @@ const DELETE_REQUEST = 'userEvents/delete_request'
 const DELETE_SUCCESS = 'userEvents/delete_success';
 const DELETE_FAILURE = 'userEvents/delete_failure';
 
+const UPDATE_REQUEST = 'userEvents/update_request'
+const UPDATE_SUCCESS = 'userEvents/update_success'
+const UPDATE_FAILURE = 'userEvents/update_failure'
+
+interface UpdateFailureAction extends Action<typeof UPDATE_FAILURE>{}
+
+interface UpdateSuccessAction extends Action<typeof UPDATE_SUCCESS>{
+    payload: { event: UserEvent };
+}
+
+interface UpdateRequestAction extends Action<typeof UPDATE_REQUEST>{
+    payload: {
+        title: string
+    }
+}
+
 interface DeleteFailureAction extends Action<typeof DELETE_FAILURE> {}
 interface DeleteSuccessAction extends Action<typeof DELETE_SUCCESS> {
   payload: { id: UserEvent['id'] };
@@ -99,6 +115,43 @@ export interface ThunkDispatch<S, E, A extends Action> {
   <R>(asyncAction: ThunkAction<R, S, E, A>): R;
 }
 */
+
+export const updateUserEvent = (event: UserEvent): ThunkAction<
+Promise<void>,
+RootState,
+undefined,
+UpdateRequestAction | UpdateSuccessAction | UpdateFailureAction
+> => async (dispatch) => {
+    const {title} = event
+    dispatch({
+        type: UPDATE_REQUEST,
+        payload: {
+            title
+        }
+    });
+
+    try{
+        const response = await fetch(`http://localhost:3001/events/${event.id}`, {
+            method: 'PUT',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(event)
+          });
+          const updatedEvent: UserEvent = await response.json();
+
+          dispatch({
+              type: UPDATE_SUCCESS,
+              payload: {
+                  event: updatedEvent
+              }
+          })
+    }catch(e){
+        dispatch({
+            type: UPDATE_FAILURE
+        })
+    }
+}
 
 export const deleteUserEvent = (id: UserEvent['id']):ThunkAction<
 Promise<void>,
@@ -222,7 +275,7 @@ export const selectUserEventsArray = (rootState: RootState) => {
 };
 
 //This reducer acts on pre defined types of objects. It's part of the signature
-const eventsReducer = (state: UserEventsState = initialState, action: LoadSuccessFulAction | CreateSuccessAction | DeleteSuccessAction) => {
+const eventsReducer = (state: UserEventsState = initialState, action: LoadSuccessFulAction | CreateSuccessAction | DeleteSuccessAction | UpdateSuccessAction) => {
     switch(action.type){
         case LOAD_SUCCESSFUL: 
             const {events} = action.payload
@@ -257,6 +310,13 @@ const eventsReducer = (state: UserEventsState = initialState, action: LoadSucces
             };
             delete newState.byIds[id];
         return newState;
+        case UPDATE_SUCCESS:
+            //rename while destructuring it, You need to add a : 
+            const { event: updatedEvent } = action.payload;
+            return {
+              ...state,
+              byIds: { ...state.byIds, [updatedEvent.id]: updatedEvent }
+            };
         default: return state;
     }
 }

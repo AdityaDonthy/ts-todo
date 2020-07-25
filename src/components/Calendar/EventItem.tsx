@@ -1,7 +1,8 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, ChangeEvent } from 'react';
 import {
   UserEvent,
-  deleteUserEvent
+  deleteUserEvent,
+  updateUserEvent
 } from '../../redux/user-events';
 import { useDispatch } from 'react-redux';
 
@@ -26,6 +27,7 @@ const EventItem: React.FC<Props> = ({ event }) => {
           inputRef.current?.focus()
       }
   }, [editable])
+
   const handleDeleteClick = () => {
     dispatch(deleteUserEvent(event.id));
   };
@@ -33,13 +35,30 @@ const EventItem: React.FC<Props> = ({ event }) => {
   const handleTitleClick = () => {
       setEditable(!editable); 
   }
+
+  const [title, setTitle] = useState(event.title)
+  const handleTitleChange = (e:ChangeEvent<HTMLInputElement>) => {
+    setTitle(e.target.value)
+  }
  
+  const handleTitleBlur = (e:React.FocusEvent<HTMLInputElement>) => {
+    setEditable(false)
+    if(title !== event.title)
+        dispatch(updateUserEvent({
+            ...event,
+            title
+        }))
+  }
   return (
     <div className="calendar-event">
       <div className="calendar-event-info">
-        <div className="calendar-event-time">10:00 - 12:00</div>
+        <div className="calendar-event-time">{event.startDate} - {event.endDate}</div>
         <div className="calendar-event-title">
-            {editable ? (<input type="text" value={event.title} ref={inputRef}/>)
+            {editable ? (<input type="text" 
+                            value={title} 
+                            ref={inputRef} 
+                            onChange={handleTitleChange}
+                            onBlur={handleTitleBlur}/>)
                       :(<span onClick={handleTitleClick}>{event.title}</span>)
             }
         </div>
