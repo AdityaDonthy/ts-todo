@@ -46,7 +46,6 @@ const CREATE_EVENT = 'userEvents/create_event'
 const CREATE_SUCCESS = 'userEvents/create_success'
 const CREATE_FAILURE = 'userEvents/create_failure'
 
-const DELETE_EVENT = 'userEvents/delete_event'
 const DELETE_REQUEST = 'userEvents/delete_request'
 const DELETE_SUCCESS = 'userEvents/delete_success';
 const DELETE_FAILURE = 'userEvents/delete_failure';
@@ -61,11 +60,6 @@ interface LoadRequestAction extends Action<typeof LOAD_REQUEST>{
 
 interface DeleteRequestAction extends Action<typeof DELETE_REQUEST>{}
 
-interface DeleteEventAction extends Action<typeof DELETE_EVENT>{
-    payload: {
-        id: number
-    }
-}
 
 interface CreateFailureAction extends Action<typeof CREATE_FAILURE>{
     payload: {
