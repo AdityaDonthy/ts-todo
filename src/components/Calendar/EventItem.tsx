@@ -1,10 +1,7 @@
 import React, { useState, useEffect, useRef, ChangeEvent } from 'react';
-import {
-  UserEvent,
-  deleteUserEvent,
-  updateUserEvent
-} from '../../redux/user-events';
+import {  UserEvent,  deleteUserEvent, updateUserEvent } from '../../redux/user-events';
 import { useDispatch } from 'react-redux';
+import moment from 'moment';
 
 interface Props {
   event: UserEvent;
@@ -52,7 +49,7 @@ const EventItem: React.FC<Props> = ({ event }) => {
   return (
     <div className="calendar-event">
       <div className="calendar-event-info">
-        <div className="calendar-event-time">{event.startDate} - {event.endDate}</div>
+        <div className="calendar-event-time">{moment.utc(event.startDate).format("HH:mm:ss")} - {moment.utc(event.endDate).format("HH:mm:ss")}</div>
         <div className="calendar-event-title">
             {editable ? (<input type="text" 
                             value={title} 
